@@ -37,6 +37,8 @@
 ```
 
 - ENSG00000168036 has the most hits at 273.  It appears that this gene is associated with the cytoskeleton/differentiation. 
+- cut -f1 hg38-gene-metadata-go.tsv| uniq -c | sort 
+    code for which has the most go_ids
 
 
 ### Answer 3
@@ -49,6 +51,9 @@
 
 - Grep pseudogene would not work because there are multiple types of pseudogene. Grep would take any ****_pseudogene available and output it. It simply isn't a narrow enough search when dealig with IG 
 
+- a specific fix for this code is `grep "IG\_.*\_gene" genes.gtf | grep -v "IG\_.*\_pseudogene"`
+- this will exclude pseudogene when searching for just gene
+- the normal search with grep IG ------_pseudogene  will filter gene 
 
 ``` 
 cut -f1 gene-tab.txt | > gene-chromo.txt
