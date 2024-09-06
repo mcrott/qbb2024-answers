@@ -163,3 +163,6 @@ greater_than_10_expression = gene_name[bool_conditions]
 
 
 print(f"The number of genes is {len(greater_than_10_expression)}")
+
+
+# The number of genes is 33
