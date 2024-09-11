@@ -1,8 +1,8 @@
 library(tidyverse)
 library(broom)
 
-dnm <- read_csv(file = "/Users/cmdb/qbb2024-answers/d4-lunch/aau1043_dnm.csv")
-ages <-read_csv(file = "~/qbb2024-answers/d4-lunch/aau1043_parental_age.csv")
+dnm <- read_csv(file= "C:/Users/test/School/Quant Bio/qbb2024-answers/d4-lunch/aau1043_dnm.csv")
+ages <-read_csv(file = "C:/Users/test/School/Quant Bio/qbb2024-answers/d4-lunch/aau1043_parental_age.csv")
 
 dnm_summary <- dnm %>%
   group_by(Proband_id) %>%
@@ -26,25 +26,28 @@ ggplot(data = dnm_by_parential_age,
 # 2.21
 # 2.22
 lm(data=dnm_by_parential_age,
-   formula = n_material_dnm + 1 ~ Mother_age )
+   formula = n_material_dnm  ~ Mother_age )
 #
 #Coefficients:
- # (Intercept)   Mother_age  
-#3.5040       0.3776  #
+#  (Intercept)   Mother_age  
+#2.5040       0.3776 
 
 lm(data=dnm_by_parential_age,
-   formula = n_paternal_dnm + 1 ~ Father_age )
+   formula = n_paternal_dnm ~ Father_age )
 #Coefficients:
 (#Intercept)   Father_age  
-#11.326        1.354  
+#10.326        1.354  
 
-
+#it appears that there is less of an effect of age on the amount of dnms on the maternal side. This is due to a slope of 0.3776. While the paternal side
+  # has a larger amount of dnms with a slope of 1.354.  paternal has a larger relationship in this case when compared to the maternal.  Id suspect based on
+  # these relationships that paternal age influences the amount of DNMs at a greater rate than maternal. 
 #
 # 2.3
   #b_0 + b_1*age
-  # age is 50.5, b_1 is 1.354, b_0 = 11.326
-# 79.703 <- 11.326 + 1.354*50.5 
-  
+  # age is 50.5, b_1 is 1.354, b_0 = 10.326
+# 78.703 <- 10.326 + 1.354*50.5 
+
+#  
   
 #2.5
 ggplot(dnm_by_parential_age) +
