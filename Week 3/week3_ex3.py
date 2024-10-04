@@ -10,8 +10,8 @@ output.write("Allele Frequency\n")
 dr = open('depth_reads.txt','w')
 dr.write("Depth Reads\n")
 for i in range(0,len(df['INFO'])):
-    for j in range(0,len(df.iloc[0][9:])):
-                   dr.write(df.iloc[0][9:][j].split(":")[2] + "\n")
+    for j in range(0,len(df.iloc[i][9:])):
+                dr.write(df.iloc[i][9:][j].split(":")[2] + "\n")
     output.write(df['INFO'][i].split(';')[3].split("=")[1] + "\n")
 output.close()
 f.close()

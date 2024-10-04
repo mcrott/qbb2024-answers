@@ -43,3 +43,8 @@ Yeast have 16 chromosomes and 1 for the mitochrondian chromosome according to th
 - No. This snp does not fall within a gene. Its flanked by SCC2 and SAS4 on its left and right respectively. 
 ## Question 3.1
 - This is a normal distribution. Considering allele frequency seems to be centered at around 0.5, I would assume that this is based on random selection. While alleles that are more detrimental to the organisms survival would slowly thin out to a lower allele frequency and the better towards a higher frequency. 
+## Question 3.2
+This is figure is showing a distribution that is centered at around 3-4. The figure is demonstrated the amount of times a part of the geneome was read.  This result was to be expected as we had assumed that the spread of random reads would be around 4.2. 
+
+This looks to be a poisson distribution
+

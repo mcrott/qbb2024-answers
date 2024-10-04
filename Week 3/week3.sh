@@ -18,6 +18,7 @@ awk '{if (length($0) == 76) counter+=1} END {print counter}' A01_09.fastq
 # depth of coverge = total number of bases read / genome length = (76 * 669548) / 12000000 = 4.24047066667
 
 #Q1.4
+# A01.27 is 224mb
 for num in 09 11 23 24 27 31 35 39 62 63
 do
     du A01_$num.fastq

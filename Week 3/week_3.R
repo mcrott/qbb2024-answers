@@ -11,3 +11,8 @@ ggplot(data=df) +
 ggplot(data=dr) +
   geom_histogram(bins=21,mapping=aes(`Depth Reads`))+
   xlim(0,20)
+
+
+ggplot(data=dr) +
+  geom_histogram(bins=21, mapping=aes(y=`Depth Reads`))+
+  xlim(0,20)
