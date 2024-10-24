@@ -6,10 +6,6 @@ OUTPUT_FILE="snp_counts.txt"
 
 ###dont forget the $ to tell it you are referencing a variable
 
-
-
-
-
 echo -e "MAF\tFeature\tEnrichment" > ${OUTPUT_FILE}
 
 for mafs in 0.1 0.2 0.3 0.4 0.5
