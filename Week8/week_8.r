@@ -30,13 +30,14 @@ gut <- logNormCounts(gut)
 # How many columns are there in colData(gut)?
     #39 total 
 #   Which three column names reported by colnames() seem most interesting? Briefly explain why.
+
     #broad annotation seems interesting as it gives the cell type, can be good to look at genes by cell type
     #percent_mito -> this is an important metric for filtering out low quality reads, this would be important to filter out bad reads
     #log_n_genes -> can look at how many genes were identified and can be paired with percent mito to identify slow quality reads
 
 # Plot cells according to X_umap using plotReducedDim() and colouring by broad_annotation
 plotReducedDim(gut,dimred = "X_umap",color_by= "broad_annotation") +
-  labs(title="Umap of Broad Annotation in Gut scRNA-seq")
+  labs(title="Umap of Broad Annotation in Gut scRNA-seq",color="Cell Type")
 # 
 # 2. Explore data
 # Explore gene-level statistics (1 pt)
@@ -90,7 +91,8 @@ summary(df)
 colData(gut) <- cbind(colData(gut), df )
 # Question 5: Visualize percent of reads from mitochondria (1 pt)
 plotColData(gut,x="broad_annotation",y="subsets_Mito_percent") +
-  theme( axis.text.x=element_text( angle=90 ) )
+  theme( axis.text.x=element_text( angle=90 ) ) +
+  labs(x="Cell Type",y="% of Mitochondrial Gene Expression",title='Percentage of Mitochondrial Gene Expresion by Cell Type')
 # Plot the subsets_Mito_percent on the y-axis against the broad_annotation on the x-axis rotating the x-axis labels using theme( axis.text.x=element_text( angle=90 ) ) and submit this plot
 
 # Which cell types may have a higher percentage of mitochondrial reads? Why might this be the case?
@@ -108,7 +110,8 @@ coi <- colData(gut)$broad_annotation == "epithelial cell"
 # Create a new SingleCellExperiment object named epi by subsetting gut with [,coi]
 epi <- (gut[,coi])
 # Plot epi according to X_umap and colour by annotation and submit this plot
-plotReducedDim(epi,dimred = "X_umap", color_by = "broad_annotation")
+plotReducedDim(epi,dimred = "X_umap", color_by = "broad_annotation") +
+  labs(title="Umap of epithilial Cells",color="Cell Type")
 # Identify marker genes in the anterior midgut
 # 
 # Create a list named marker.info that contains the pairwise comparisons between all annotation categories using scoreMarkers( epi, colData(epi)$annotation 
@@ -126,7 +129,8 @@ sort(head(ordered[,1:4]),decreasing = TRUE)
 #   Plot the expression of the top marker gene across cell types using plotExpression() and specifying the gene name as the feature and annotation as the x-axis and submit this plot
 library(scales)
 plotExpression(epi,features = 'Men-b',x="annotation") +
-  scale_x_discrete(labels = wrap_format(15))
+  scale_x_discrete(labels = wrap_format(15)) +
+  labs(x="Epithial Cells",y="Expression",title="Expression of Epithilial Cells")
 
 # Analyze somatic precursor cells (3 pt)
 # Repeat the analysis for somatic precursor cells
@@ -142,7 +146,9 @@ plotReducedDim(somatic,dimred='X_umap',color_by = "broad_annotation")
 # Create a vector goi that contains the names of the top six genes of interest by rownames(ordered)[1:6]
 # Plot the expression of the top six marker genes across cell types using plotExpression() and specifying the goi vector as the features and submit this plot
 # Which two cell types have more similar expression based on these markers?
+  #enteroblast and intestinal stem cell have the most similar expression
 #   Which marker looks most specific for intestinal stem cells?
+  # DI looks to be the most specific for intestinal stem cells
 # 
 marker.info <- scoreMarkers( somatic, colData(somatic)$annotation)
 chosen <- marker.info[["intestinal stem cell"]]
@@ -151,11 +157,13 @@ head(ordered[,1:4])
 sort(head(ordered[,1:4]),decreasing = TRUE)
 
 goi = rownames(ordered)[1:6]
+
 #top six marker genes in somatic precursor cells
 #Tet, hdc, kek5, zfh2, N, dl
 
 plotExpression(somatic, features=goi,x='annotation') +
-  scale_x_discrete(labels = wrap_format(15))
+  scale_x_discrete(labels = wrap_format(15)) +
+  labs(x='Somatic Cell Type',title='Expression Fold Change of Somatic Precursor Cells')
 
 
 
