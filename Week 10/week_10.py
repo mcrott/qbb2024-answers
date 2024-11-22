@@ -1,15 +1,11 @@
 import numpy as np
-import scipy
-import matplotlib.pyplot as plt
 import imageio
-import plotly.express as px
-import plotly
 from pathlib import Path
-#folder names
-# "apex","pim2","polr2b","srsf1"
-# "field_1","field_0"
+import pandas as pd
 
-from pathlib import Path
+df = pd.DataFrame(columns=['Gene', 'nascentRNA', 'PCNA',"ratio"])
+
+#folder names
 
 def find_labels(mask):
     # Set initial label
@@ -124,63 +120,71 @@ def filter_by_size(labels, minsize, maxsize):
         # Relabel so labels span 1 to # of labels
         labels[np.where(labels == j)] = i
     return labels
-
-
-
-
 folder_path = Path("/Users/cmdb/qbb2024-answers/Week 10/images")
 images_dict = {}
+fields = "_DAPI","_nascentRNA","_PCNA"
 def load_img(image):
     img = imageio.v3.imread(image).astype(np.uint16)
-    # img -= np.amin(img)
-    # img /= np.amax(img)
     return img
+def dapi_mask(dapi):
+    mask_mean = np.average(dapi)
+    mask_true = dapi >= mask_mean
+    label_array = find_labels(mask_true)
+    copy_label = np.copy(label_array)
+    copy_array = filter_by_size(copy_label,100,1000000)
+    sizes = np.bincount(copy_array[copy_array > 0].ravel())
+    size_mean = np.mean(sizes)
+    size_std = np.std(sizes)
+    final_array = filter_by_size(copy_array,size_mean - size_std, size_mean + size_std)
+    #this is the array of labels
+    return final_array
+def image_analysis(dapi_mask,final_array):
+    num_nuclei = np.amax(dapi_mask) + 1
+    output_array = []
+    for i in range(1,num_nuclei):
+        where = np.where(dapi_mask==i)
+        output_array.append(np.average(final_array[where]))
+    return np.array(output_array)  
+#store images in a dict
+for i in folder_path.iterdir():
+    if i.name == ".DS_Store":
+        continue
+    for j in i.iterdir():
+        if "field1" in j.name:
+            title = f"{i.name}_field1"
+            if "_c" in j.name:
+                continue
+            if title in images_dict.keys():
+                images_dict[title].append(load_img(j))
+            else:
+                images_dict[title] = []
+                images_dict[title].append(load_img(j))
+        if "field0" in j.name:
+            title = f"{i.name}_field0"
+            if "_c" in j.name:
+                continue
+            if title in images_dict.keys():
+                images_dict[title].append(load_img(j))
+            else:
+                images_dict[title] = []
+                images_dict[title].append(load_img(j))
+#image_dict = dapi-rna-pcna
+for i in images_dict.keys():
+    data_dict = {}
+    gene = []
+    dapi_pointer = dapi_mask(images_dict[i][0])
+    pcna = image_analysis(dapi_pointer,images_dict[i][2])
+    nascent = image_analysis(dapi_pointer,images_dict[i][1])
+    nascent[~np.isnan(nascent)]/pcna[~np.isnan(pcna)]
+    for j in range(0,len(nascent)):
+        gene.append(i.split("_")[0])
+    data_dict['Gene'] = gene
+    data_dict['nascentRNA'] = nascent
+    data_dict['PCNA'] = pcna
+    data_dict['ratio'] = np.log2(nascent[~np.isnan(nascent)]/pcna[~np.isnan(pcna)])
+    new_df = pd.DataFrame(data_dict)
+    df = pd.concat([df, new_df], ignore_index=True)
 
-# for i in folder_path.iterdir():
-#     if i.name == ".DS_Store":
-#         continue
-#     for j in i.iterdir():
-#         if "field1" in j.name:
-#             title = f"{i.name}_field1"
-#             if "_c" in j.name:
-#                 continue
-#             if title in images_dict.keys():
-#                 images_dict[title].append(load_img(j))
-#             else:
-#                 images_dict[title] = []
-#                 images_dict[title].append(load_img(j))
-#         if "field0" in j.name:
-#             title = f"{i.name}_field0"
-#             if "_c" in j.name:
-#                 continue
-#             if title in images_dict.keys():
-#                 images_dict[title].append(load_img(j))
-#             else:
-#                 images_dict[title] = []
-#                 images_dict[title].append(load_img(j))
+df.to_csv('week10_output.csv', index=False)
 
-# mask_dict = {}
-# for i in images_dict.keys():
-#     for j in images_dict[i]:
-#         mean_=
-#         mask_dict[i] =
-        
-#dapi is in the first array
-ch1 = "/Users/cmdb/qbb2024-answers/Week 10/images/polr2b/POLR2B_field0_DAPI_c.tif"
 
-img = load_img(ch1)
-mask_mean = np.average(img)
-mask_true = img >= mask_mean
-
-label_array = find_labels(mask_true)
-copy_label = np.copy(label_array)
-copy_array = filter_by_size(copy_label,100,100000)
-sizes = np.bincount(copy_array[copy_array > 0].ravel())
-#Finally, filter the labels one more time, this time using the mean size plus or minus the standard deviation of 
-# sizes as the lower and upper boundaries. This will give you your final labels
-size_mean = np.mean(sizes)
-size_std = np.std(sizes)
-final_array = filter_by_size(copy_array,size_mean - size_std, size_mean + size_std)
-
-plt.imshow(final_array)
-plt.show()
